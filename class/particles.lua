@@ -11,6 +11,7 @@ local function new(count)
         collisionDamping = 0.7,
         boundsSize = Vector.new(1280, 720),
         particleSize = 16,
+        influence = 10,
         pool = {},
     }, particlesPool)
 end
@@ -29,6 +30,21 @@ function particlesPool:init()
         local y = -halfBoundSize.y + spacingY * col + self.particleSize
         table.insert(self.pool, commonParticle(Vector(x, y), self.gravity, self.boundsSize, self.particleSize, self.collisionDamping))
     end
+end
+
+function particlesPool:calculationDensity(samplePoint)
+    assert(Vector.isvector(samplePoint), "Add: wrong argument types (<vector> expected)")
+
+    local density = 0
+    local mass = 1
+    
+    for _, par in ipairs(self.pool) do
+        local dst = (par.position )
+        par:SmoothingKernel()
+        density =  density + mass * self.influence
+    end
+
+    return density
 end
 
 function particlesPool:update(dt)

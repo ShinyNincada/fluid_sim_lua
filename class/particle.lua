@@ -24,6 +24,11 @@ function particle:resolveCollision()
     end
 end
 
+function particle:SmoothingKernel()
+    local radius = self.size / 2;
+    local value = math.max(0, radius - radius)
+end
+
 function particle:draw()
     love.graphics.setColor(1, 1, 1)
     love.graphics.circle("fill", self.position.x, self.position.y, self.size)
