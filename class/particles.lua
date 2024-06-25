@@ -3,17 +3,40 @@ local commonParticle = require 'class.particle'
 local particlesPool = {}
 
 particlesPool.__index = particlesPool
+particlesPool.shader = love.graphics.newShader[[
+    extern vec2 resolution;
+    extern vec2 center;
+    extern float radius;
+
+    vec4 effect(vec4 color, Image texture, vec2 texture_coords, vec2 screen_coords) {
+        vec2 pos = center/resolution;
+        float dist = length(pos);
+        if (dist < radius) {
+            return vec4(color.rgb, 1.0); // Inside the circle
+        } else {
+            return vec4(1.0, 1.0, 0.0, 1.0); // Outside the circle  
+        }
+    }
+
+]]
+
 
 local function new(count)
-    return setmetatable({
+    local base = setmetatable({
         count = count or 100,
         gravity = 50;
         collisionDamping = 0.7,
-        boundsSize = Vector.new(1280, 720),
+        boundsSize = Vector.new(720, 480),
         particleSize = 16,
         influence = 10,
         pool = {},
     }, particlesPool)
+
+     -- Set initial parameters for the shader
+    base.shader:send("resolution", {love.graphics.getWidth(), love.graphics.getHeight()})
+    base.shader:send("center", {love.graphics.getWidth(), love.graphics.getHeight()})
+    base.shader:send("radius", 1.42) -- Circle radius as a fraction of the screen width
+    return base
 end
 
 function particlesPool:init()
@@ -54,9 +77,15 @@ function particlesPool:update(dt)
 end
 
 function particlesPool:draw()
+    love.graphics.setColor(1, 1, 1)
+    love.graphics.rectangle("line", - self.boundsSize.x/2, - self.boundsSize.y/2, self.boundsSize.x, self.boundsSize.y)
+    -- love.graphics.circle("fill", position.x, position.y, particleSize)
+    love.graphics.setShader(self.shader)
     for i = 1, #self.pool do
         self.pool[i]:draw()
     end
+    love.graphics.setShader()
+    love.graphics.setColor(0, 0, 0)
 end
 
 return setmetatable({new = new},

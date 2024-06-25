@@ -31,10 +31,6 @@ end
 
 function game:draw()
     mainCam:attach()
-        love.graphics.setColor(1, 1, 1)
-        love.graphics.rectangle("line", - particlePool.boundsSize.x/2, - particlePool.boundsSize.y/2, particlePool.boundsSize.x, particlePool.boundsSize.y)
-        -- love.graphics.circle("fill", position.x, position.y, particleSize)
-        love.graphics.setColor(0, 0, 0)
         particlePool:draw()
     mainCam:detach()
 end

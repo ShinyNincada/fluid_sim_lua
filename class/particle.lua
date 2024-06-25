@@ -1,6 +1,8 @@
 local particle = {}
 particle.__index = particle
 
+
+
 local function new(position, gravity, boundsSize, particleSize, collisionDamping)
 	return setmetatable({position = position, velocity = Vector(), gravity = gravity or 50, boundsSize = boundsSize or Vector.new(1280, 720), size = particleSize or 16, damp = collisionDamping or 0.7}, particle)
 end
@@ -30,9 +32,11 @@ function particle:SmoothingKernel()
 end
 
 function particle:draw()
+    -- love.graphics.setShader(self.shader)
     love.graphics.setColor(1, 1, 1)
     love.graphics.circle("fill", self.position.x, self.position.y, self.size)
     love.graphics.setColor(0, 0, 0)
+    -- love.graphics.setShader()
 end
 
 -- the module
